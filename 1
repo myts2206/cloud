@@ -111,3 +111,80 @@ model.fit(X_train, y_train, epochs=100, validation_data=(X_val, y_val), callback
 
 # Once again, new model gets evaluated against the same validation data
 model.evaluate(X_val, y_val)
+----------------------------------------------------------------------------------------------------------------------------
+
+This code implements a deep learning pipeline using TensorFlow and Keras to train a model on the CIFAR-10 dataset. Below is a breakdown of the code:
+
+---
+
+### **1. Dataset Loading and Preprocessing**
+- The **CIFAR-10 dataset** is loaded using `cifar10.load_data()`. It contains 60,000 32x32 color images classified into 10 categories (e.g., airplanes, cars, etc.).
+- The dataset is split into:
+  - `X_train_full`, `y_train_full` (training set with labels)
+  - `X_test`, `y_test` (test set with labels).
+- A **validation set** of 5,000 samples is created by splitting the training data (`train_test_split`) to evaluate the model during training.
+
+---
+
+### **2. Model Architecture**
+#### **First Model**
+- The model is defined as a sequential architecture:
+  - Input is flattened into a 1D vector (`Flatten` layer).
+  - A **deep dense network** is built with 20 layers of 100 neurons, each using the **Swish activation** function and initialized with **He-normal** initialization.
+  - The final output layer has 10 neurons (one for each class) with a **softmax activation** for classification.
+  
+#### **Second Model (With Batch Normalization)**
+- Similar to the first model, but includes:
+  - **Batch Normalization** to normalize intermediate layer outputs.
+  - Swish activation is applied explicitly after Batch Normalization.
+
+---
+
+### **3. Model Compilation**
+- **Loss function**: `sparse_categorical_crossentropy` is used as this is a multi-class classification problem.
+- **Optimizer**: Nadam (adaptive optimizer based on Adam).
+- **Metrics**: Accuracy is used to evaluate the model's performance.
+
+---
+
+### **4. Callbacks**
+#### Callbacks enhance training by adding monitoring and optimization:
+- **ModelCheckpoint**:
+  - Saves the model weights only when it achieves the best validation accuracy.
+- **EarlyStopping**:
+  - Stops training if validation performance does not improve for 20 epochs, preventing overfitting.
+  - Restores the best weights.
+- **TensorBoard**:
+  - Tracks the training process visually, including metrics like loss and accuracy.
+  - Logs are saved in timestamped folders for better organization.
+
+---
+
+### **5. Training and Evaluation**
+- The model is trained for up to 100 epochs using `model.fit()`:
+  - Inputs: training data (`X_train`, `y_train`) and validation data (`X_val`, `y_val`).
+  - Callbacks are used to monitor and save progress.
+- After training, the model is evaluated on the validation dataset to assess its accuracy.
+
+---
+
+### **6. Key Concepts**
+1. **Swish Activation**:
+   - A smooth, non-monotonic activation function that performs well in deep models.
+2. **Batch Normalization**:
+   - Reduces internal covariate shift, improving model convergence and stability.
+3. **Callbacks**:
+   - Automate tasks like saving the best model and early stopping to enhance training efficiency.
+4. **Logging with TensorBoard**:
+   - Tracks training metrics and generates visual learning curves.
+
+---
+
+### **7. Model Workflow**
+1. Load CIFAR-10 dataset and preprocess.
+2. Split data into training, validation, and test sets.
+3. Build a dense deep learning model:
+   - First with plain Dense layers.
+   - Second with Batch Normalization for better performance.
+4. Train both models with the same settings and callbacks.
+5. Evaluate each model on the validation dataset to compare performance.
